@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  database:
+    image: mysql:5.7
+    volumes:
+      - mysqldata:/var/lib/mysql
+    ports:
+      - "${MYSQL_PORT:-13306}:3306"
+    env_file:
+      - .env
+  redis:
+    image: redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redisdata:/data
+    ports:
+      - "${REDIS_PORT:-16379}:6379"
+  app:
+    build: .
+    entrypoint: ./entrypoint.sh
+    command: bundle exec rails s -b 0.0.0.0
+    volumes:
+      - .:/app
+    ports:
+      - "${RAILS_PORT:-3000}:3000"
+    depends_on:
+      - database
+      - redis
+    env_file:
+      - .env
+    # for byebug
+    tty: true
+    stdin_open: true
+
+volumes:
+  mysqldata: {}
+  redisdata: {}
