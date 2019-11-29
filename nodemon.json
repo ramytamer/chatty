@@ -1,0 +1,6 @@
+{
+  "events": {
+    "crash": "osascript -e 'display notification \"Tests failed ⛔️\" with title \"Chatty\"'",
+    "exit": "osascript -e 'display notification \"Tests passed ✅\" with title \"Chatty\"' sound name 'Glass'"
+  }
+}

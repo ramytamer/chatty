@@ -1,7 +1,9 @@
-FROM ruby:2.5
+FROM ruby:2.5.7
 
 RUN apt-get update -qq \
-  && apt-get install -y mysql-client
+  && apt-get install -y default-mysql-client --no-install-recommends \
+  && apt-get -q clean \
+  && rm -rf /var/lib/apt/lists
 
 WORKDIR /app
 

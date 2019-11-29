@@ -3,12 +3,7 @@ Layout/EmptyLinesAroundBlockBody:
     - 'db/schema.rb'
 
 Style/Documentation:
-  Exclude:
-    - 'spec/**/*'
-    - 'test/**/*'
-    - 'app/mailers/application_mailer.rb'
-    - 'app/models/application_record.rb'
-    - 'config/application.rb'
+  Enabled: false
 
 Style/ExpandPathArguments:
   Exclude:
@@ -45,3 +40,8 @@ Metrics/ClassLength:
 
 Metrics/AbcSize:
   Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*
+    - config/routes.rb
