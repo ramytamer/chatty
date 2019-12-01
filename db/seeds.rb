@@ -12,11 +12,13 @@ ChatApp.destroy_all
 5.times do
   chat_app = ChatApp.create!(name: Faker::TvShows::SiliconValley.app, token: SecureRandom.uuid)
 
-  3.times do |i|
-    chat = Chat.create!(chat_app_id: chat_app.id, name: Faker::TvShows::SiliconValley.invention, number: i + 1)
+  3.times do |_i|
+    chat_number = Redix.connection.incr "chat_apps.#{chat_app.token}.chats.number"
+    chat = Chat.create!(chat_app_id: chat_app.id, name: Faker::TvShows::SiliconValley.invention, number: chat_number)
 
-    4.times do |j|
-      Message.create!(chat_id: chat.id, body: Faker::TvShows::RickAndMorty.quote, number: j + 1)
+    4.times do |_j|
+      message_number = Redix.connection.incr "chat_apps.#{chat_app.token}.chats.#{chat.number}.messages.number"
+      Message.create!(chat_id: chat.id, body: Faker::TvShows::RickAndMorty.quote, number: message_number)
     end
   end
 end

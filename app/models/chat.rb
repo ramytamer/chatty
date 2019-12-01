@@ -6,7 +6,7 @@ class Chat < ApplicationRecord
   validates :name, :number, :chat_app, presence: true
   validates :number, uniqueness: { scope: :chat_app }
 
-  belongs_to :chat_app
+  belongs_to :chat_app, counter_cache: :chats_count
   has_many :messages
 
   scope :for_chat_app, ->(chat_app_id) { where(chat_app_id: chat_app_id) }

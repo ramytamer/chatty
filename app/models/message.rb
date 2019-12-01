@@ -17,7 +17,7 @@ class Message < ApplicationRecord
   validates :body, :number, :chat, presence: true
   validates :number, uniqueness: { scope: :chat }
 
-  belongs_to :chat
+  belongs_to :chat, counter_cache: :messages_count
   has_one :chat_app, through: :chat
 
   scope :for_chat, lambda { |chat_app_token, chat_number|
