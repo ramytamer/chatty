@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_191_201_035_013) do
+ActiveRecord::Schema.define(version: 20_191_201_174_430) do
 
   create_table 'chat_apps', options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8', force: :cascade do |t|
     t.string 'name'
@@ -30,5 +30,16 @@ ActiveRecord::Schema.define(version: 20_191_201_035_013) do
     t.index %w[number chat_app_id], name: 'index_chats_on_number_and_chat_app_id', unique: true
   end
 
+  create_table 'messages', options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8', force: :cascade do |t|
+    t.text 'body'
+    t.integer 'number'
+    t.bigint 'chat_id'
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.index ['chat_id'], name: 'index_messages_on_chat_id'
+    t.index %w[number chat_id], name: 'index_messages_on_number_and_chat_id', unique: true
+  end
+
   add_foreign_key 'chats', 'chat_apps'
+  add_foreign_key 'messages', 'chats'
 end
