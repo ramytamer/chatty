@@ -4,16 +4,14 @@ class ChatsController < ApplicationController
   include Paginateable
   include Responseable
 
-  before_action :set_chat_app, except: [:create]
+  before_action :set_chat, only: [:show]
   before_action :validate_name, only: [:create]
 
   def index
-    @chats = Chat.where(chat_app_id: @chat_app.id).paginate(per_page: per_page, page: page)
+    @chats = Chat.by_chat_app_token(params[:chat_app_token]).paginate(per_page: per_page, page: page)
   end
 
-  def show
-    @chat = Chat.find_by!(number: params[:number], chat_app_id: @chat_app.id)
-  end
+  def show; end
 
   def create
     key = "chat_apps.#{params[:chat_app_token]}.chats.number"
@@ -27,8 +25,8 @@ class ChatsController < ApplicationController
 
   private
 
-  def set_chat_app
-    @chat_app = ChatApp.find_by!(token: params[:chat_app_token])
+  def set_chat
+    @chat = Chat.by_chat_app_token(params[:chat_app_token]).by_number(params[:number]).first
   end
 
   def chat_params
