@@ -9,6 +9,8 @@ class ChatApp < ApplicationRecord
 
   before_create :set_token
 
+  has_many :chats
+
   def set_token
     self.token = SecureRandom.uuid if token.blank?
   end
