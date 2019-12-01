@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'sidekiq/testing'
 
 RSpec.describe ChatsController, type: :controller do
   render_views
@@ -8,11 +9,11 @@ RSpec.describe ChatsController, type: :controller do
   before { @chat_app = create(:chat_app) }
 
   let(:valid_attributes) do
-    { chat: attributes_for(:chat, chat_app_id: @chat_app.id) }
+    { chat: { name: Faker::TvShows::SiliconValley.invention }, chat_app_token: @chat_app.token }
   end
 
   let(:invalid_attributes) do
-    { chat: { name: nil, number: nil, chat_app_id: 404 } }
+    { chat: { name: nil }, chat_app_token: @chat_app.token }
   end
 
   describe 'GET #index' do
@@ -43,5 +44,41 @@ RSpec.describe ChatsController, type: :controller do
   end
 
   describe 'POST #create' do
+    before do
+      @key = "chat_apps.#{@chat_app.token}.chats.number"
+      @last_number = Redix.connection.incr(@key)
+    end
+
+    after do
+      Redix.connection.del(@key)
+      Sidekiq::Worker.clear_all
+    end
+
+    context 'create chat job' do
+      it 'increment number in redis' do
+        post :create, params: valid_attributes, format: :json
+        Sidekiq::Testing.inline! do
+          expect(response.status).to eq 201
+          expect(Redix.connection.get(@key).to_i).to eq @last_number + 1
+          expect(JSON.parse(response.body)['chat_number']).to eq @last_number + 1
+        end
+      end
+    end
+
+    context 'validates chat name before creating the job' do
+      before { post :create, params: invalid_attributes, format: :json }
+
+      it 'returns 422' do
+        expect(response.status).to eq 422
+      end
+
+      it 'returns errors json' do
+        expect(response.body).to include "Name can't be blank"
+      end
+
+      it 'does not increment redis number' do
+        expect(Redix.connection.get(@key).to_i).to eq @last_number
+      end
+    end
   end
 end

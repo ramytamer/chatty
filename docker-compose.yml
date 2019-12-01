@@ -42,6 +42,17 @@ services:
     # for byebug
     tty: true
     stdin_open: true
+  # I went with sidekiq for the sake of the task, but in real word app I would use something like Rabbitmq
+  sidekiq:
+    build: .
+    entrypoint: ./entrypoint.sh
+    command: bundle exec sidekiq
+    volumes:
+      - .:/app
+    depends_on:
+      - app
+    env_file:
+      - .env
 
 volumes:
   mysqldata: {}

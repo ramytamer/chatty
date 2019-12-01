@@ -7,4 +7,6 @@ class Chat < ApplicationRecord
   validates :number, uniqueness: { scope: :chat_app }
 
   belongs_to :chat_app
+
+  scope :for_chat_app, ->(chat_app_id) { where(chat_app_id: chat_app_id) }
 end
