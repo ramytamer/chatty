@@ -45,6 +45,7 @@ Metrics/BlockLength:
   Exclude:
     - spec/**/*
     - config/routes.rb
+    - db/schema.rb
 
 Style/GlobalVars:
   Exclude:
