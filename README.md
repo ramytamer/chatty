@@ -16,6 +16,12 @@ executing `docker-compose run app rake db:create db:migrate`.
 4. Finally you can boot up the server using this command `docker-compose up`; this will boot all the required services
 like the database, redis...
 
+5. You will need to run create and import the elasticsearch index for the messages table, this should be done in an async way
+It's placed in the seeds file but in-case you want to do that from the the console or in a cron job for example execute:
+`Message.__elasticsearch__.create_index!` then `Message.import`;
+Also note that we have the elasticsearch model callback registered for the message model, so for each new record gets created
+it will automatically be indexed in elasticsearch.
+
 # Testing and Linting
 
 1. To run your tests you need to run the same commands but in the `test` env using

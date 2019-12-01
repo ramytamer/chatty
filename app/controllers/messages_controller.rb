@@ -5,14 +5,21 @@ class MessagesController < ApplicationController
   include Responseable
 
   before_action :set_message, only: [:show]
+  before_action :set_chat, only: [:search]
   before_action :validate_body, only: [:create]
 
   def index
     @messages = Message.for_chat(params[:chat_app_token], params[:chat_number])
+                       .newst_first
                        .paginate(per_page: per_page, page: page)
   end
 
   def show; end
+
+  def search
+    @messages = Message.es_search(params['q'], @chat.id).records.newst_first.paginate(per_page: per_page, page: page)
+    render 'messages/index.json.jbuilder'
+  end
 
   def create
     key = "chat_apps.#{params[:chat_app_token]}.chats.#{params[:chat_number]}.messages.number"
@@ -28,6 +35,10 @@ class MessagesController < ApplicationController
 
   def set_message
     @message = Message.for_chat(params[:chat_app_token], params[:chat_number]).by_number(params[:number]).first
+  end
+
+  def set_chat
+    @chat = Chat.by_chat_app_token(params[:chat_app_token]).by_number(params[:chat_number]).first
   end
 
   def message_params

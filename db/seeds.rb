@@ -20,3 +20,6 @@ ChatApp.destroy_all
     end
   end
 end
+
+Message.__elasticsearch__.create_index!
+Message.import

@@ -37,5 +37,7 @@ module App
     config.default_pagination_per_page = 25
 
     config.redis_url = ENV['REDIS_URL']
+
+    Elasticsearch::Model.client = Elasticsearch::Client.new host: ENV['ELASTICSEARCH_HOST']
   end
 end
