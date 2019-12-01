@@ -27,6 +27,6 @@ class Message < ApplicationRecord
   scope :newst_first, -> { order(id: :desc) }
 
   def self.es_search(query, chat_id)
-    search(query: { bool: { must: [{ match: { body: query } }, { match: { chat_id: chat_id } }] } })
+    search(query: { bool: { must: [{ wildcard: { body: "*#{query}*" } }, { match: { chat_id: chat_id } }] } })
   end
 end
