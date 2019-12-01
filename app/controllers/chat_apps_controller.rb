@@ -5,7 +5,7 @@ class ChatAppsController < ApplicationController
   include Responseable
 
   def index
-    @chat_apps = ChatApp.paginate(page: page)
+    @chat_apps = ChatApp.paginate(per_page: per_page, page: page)
   end
 
   def create
