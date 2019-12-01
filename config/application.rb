@@ -35,5 +35,7 @@ module App
     config.api_only = true
 
     config.default_pagination_per_page = 25
+
+    config.redis_url = ENV['REDIS_URL']
   end
 end
